@@ -1,0 +1,1 @@
+##INFO=<ID=SomaticFisherPhred,Number=1,Type=Float,Description="Phred score of Fisher's test of somatic allele ratio vs PoN allele ratio (applies only to SNVs that pass Strelka filters)">

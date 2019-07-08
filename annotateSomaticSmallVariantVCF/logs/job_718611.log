@@ -1,0 +1,44 @@
+Sender: LSF System <hpc-grid-lsfadmin@hpc-prod-grid-lsfexec-054.gel.zone>
+Subject: Job 718611: <annot> in cluster <pegasus> Done
+
+Job <annot> was submitted from host <hpc-prod-grid-login-internal-01.gel.zone> by user <jmitchell1> in cluster <pegasus> at Mon Jul  8 16:38:48 2019
+Job was executed on host(s) <hpc-prod-grid-lsfexec-054.gel.zone>, in queue <bio>, as user <jmitchell1> in cluster <pegasus> at Mon Jul  8 16:38:49 2019
+</home/jmitchell1> was used as the home directory.
+</home/jmitchell1/noiseModelBertha_passArg/component2> was used as the working directory.
+Started at Mon Jul  8 16:38:49 2019
+Terminated at Mon Jul  8 16:39:39 2019
+Results reported at Mon Jul  8 16:39:39 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+bash from_annotation_to_vcf.sh -v /home/jmitchell1/noiseModelBertha_passArg/component1/testOutput/fisherVCF/LP3000396-DNA_G02.vcf.gz -j /home/jmitchell1/noiseModelBertha_passArg/component2/testInput/LP3000396-DNA_G02.json.gz -o /home/jmitchell1/noiseModelBertha_passArg/component2/testOutput/
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   3.99 sec.
+    Max Memory :                                 44 MB
+    Average Memory :                             44.00 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Swap :                                   1104 MB
+    Max Processes :                              4
+    Max Threads :                                28
+    Run time :                                   54 sec.
+    Turnaround time :                            51 sec.
+
+The output (if any) follows:
+
+Starting work on: LP3000396-DNA_G02
+Output directory will be: /home/jmitchell1/noiseModelBertha_passArg/component2/testOutput/annotatedVCF/
+Final path will be: /home/jmitchell1/noiseModelBertha_passArg/component2/testOutput/annotatedVCF/LP3000396-DNA_G02.vcf.gz
+
+
+PS:
+
+Read file <logs/job_718611.err> for stderr output of this job.
+
