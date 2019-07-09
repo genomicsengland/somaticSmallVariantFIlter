@@ -3,7 +3,7 @@
 # Submit with 
 # bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory" 
 # e.g. 
-# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b /genomes/by_date/2018-06-25/CANCP41874/CancerLP3000396-DNA_G02_NormalLP3000417-DNA_H02/LP3000396-DNA_G02/Assembly/LP3000396-DNA_G02.bam -v /home/jmitchell1/noiseModelBertha_passArg/component1/testInput/LP3000396-DNA_G02.duprem.left.split.reheadered.head6k.vcf.gz -o /home/jmitchell1/noiseModelBertha_passArg/component1/testOutput/" 
+# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b /genomes/by_date/2018-06-25/CANCP41874/CancerLP3000396-DNA_G02_NormalLP3000417-DNA_H02/LP3000396-DNA_G02/Assembly/LP3000396-DNA_G02.bam -v /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testInput/LP3000396-DNA_G02.duprem.left.split.reheadered.head6k.vcf.gz -o /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testOutput/" 
 
 #Set the cancer test environment to replicate Bertha
 source /genomes/software/src/test-venvs/cancer-test/bin/activate
@@ -62,9 +62,8 @@ mkdir -p ${fisher_vcf_dir}
 fisher_vcf="${fisher_vcf_dir}${samplename}.vcf.gz"
 fisher_vcf_uz="${fisher_vcf_dir}${samplename}.vcf"
 
-
 #Extract all SNVs in autosome and sex chromosomes and put in temporary text file
-zcat ${vcf} | awk '$1~/^(chr1|chr2|chr3|chr4|chr5|chr6|chr7|chr8|chr9|chr10|chr11|chr12|chr13|chr14|chr15|chr16|chr17|chr18|chr19|chr20|chr21|chr22|chrX|chrY)$/ && $4~/^(A|C|G|T)$/ && $5~/^(A|C|G|T)$/ && $7 == "PASS"' > ${snvtxt}
+python writeSNV.py ${vcf} ${snvtxt}
 
 
 #Perfom pileup (alelle depth count) on tumour BAM at somatic SNV sites
