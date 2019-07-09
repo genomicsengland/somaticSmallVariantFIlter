@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Submit with 
-# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b somaticBamFile -v somaticVcf -o outputDirectory" 
+# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory" 
 # e.g. 
 # bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b /genomes/by_date/2018-06-25/CANCP41874/CancerLP3000396-DNA_G02_NormalLP3000417-DNA_H02/LP3000396-DNA_G02/Assembly/LP3000396-DNA_G02.bam -v /home/jmitchell1/noiseModelBertha_passArg/component1/testInput/LP3000396-DNA_G02.duprem.left.split.reheadered.head6k.vcf.gz -o /home/jmitchell1/noiseModelBertha_passArg/component1/testOutput/" 
 
