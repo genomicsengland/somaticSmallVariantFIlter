@@ -3,7 +3,7 @@
 # Submit with 
 # bsub -n 1 -J "annot" -q bio -P Analysis -o logs/job_%J.log -e logs/job_%J.err "bash from_annotation_to_vcf.sh -v fisherVCF -j annotationJSON -o outputDir"
 # e.g.
-# bsub -n 1 -J "annot" -q bio -P Analysis -o logs/job_%J.log -e logs/job_%J.err "bash from_annotation_to_vcf.sh -v /home/jmitchell1/noiseModelBertha_passArg/component1/testOutput/fisherVCF/LP3000396-DNA_G02.vcf.gz -j /home/jmitchell1/noiseModelBertha_passArg/component2/testInput/LP3000396-DNA_G02.json.gz -o /home/jmitchell1/noiseModelBertha_passArg/component2/testOutput/" 
+# bsub -n 1 -J "annot" -q bio -P Analysis -o logs/job_%J.log -e logs/job_%J.err "bash from_annotation_to_vcf.sh -v /home/jmitchell1/noiseModelBertha_passArg/annotateSomaticSmallVariantVCF/testOutput/fisherVCF/LP3000396-DNA_G02.vcf.gz -j /home/jmitchell1/noiseModelBertha_passArg/annotateSomaticSmallVariantVCF/testInput/LP3000396-DNA_G02.json.gz -o /home/jmitchell1/noiseModelBertha_passArg/annotateSomaticSmallVariantVCF/testOutput/" 
 
 
 #Set the cancer test environment to replicate Bertha
@@ -41,7 +41,7 @@ mkdir -p ${annotated_vcf_dir}
 annotated_vcf="${annotated_vcf_dir}${samplename}.vcf.gz"
 
 #Set running directory
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR=`dirname $0`
 
 #Create VCF with additional filters and annotation, and additional annotations (python script takes sample name from vcf, everything before first .)
 python ${DIR}/from_annotation_to_vcf.py -v ${vcf} -j ${json} -o ${annotated_vcf_dir}

@@ -34,7 +34,7 @@ samplename=${vcf##*/}
 samplename=${samplename%%.*}
 
 #Set running directory
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR=`dirname $0`
 
 #Create directories and file names
 vcf_unzip_dir="${outDir}tmpUnzip/"
@@ -63,7 +63,7 @@ fisher_vcf="${fisher_vcf_dir}${samplename}.vcf.gz"
 fisher_vcf_uz="${fisher_vcf_dir}${samplename}.vcf"
 
 #Extract all SNVs in autosome and sex chromosomes and put in temporary text file
-python ${DIR}writeSNV.py ${vcf} ${snvtxt}
+python ${DIR}/writeSNV.py ${vcf} ${snvtxt}
 
 
 #Perfom pileup (alelle depth count) on tumour BAM at somatic SNV sites
