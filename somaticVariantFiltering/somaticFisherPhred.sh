@@ -63,7 +63,7 @@ fisher_vcf="${fisher_vcf_dir}${samplename}.vcf.gz"
 fisher_vcf_uz="${fisher_vcf_dir}${samplename}.vcf"
 
 #Extract all SNVs in autosome and sex chromosomes and put in temporary text file
-python writeSNV.py ${vcf} ${snvtxt}
+python ${DIR}writeSNV.py ${vcf} ${snvtxt}
 
 
 #Perfom pileup (alelle depth count) on tumour BAM at somatic SNV sites
