@@ -30,3 +30,9 @@ outputDir: location of all output
 The final output (fully annotated vcf) is
 
 outputDirectory/annotatedVCF/sampleID.vcf.gz
+
+## Annotate Somatic Small Variant VCF multiSample
+
+Identical to component AnnotateSomaticSmallVariantVCF but with a small change so that it works with multi sample somatic vcf
+
+NB The componet somaticVariantFiltering works for both single and multi sample somatic vcf without modification.
