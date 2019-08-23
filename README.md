@@ -8,7 +8,8 @@ The first component "Somatic Variant Filtering" calculates, and annotates the IN
 ## Somatic Variant Filtering
 
 Is run on LSF using somaticFisherPhred.sh:
-bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory"
+bsub -n 12 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory/"
+NB forward slash required at end of output directory
 
 tumourBamFile: The tumour BAM file generated for running the CANVAS component  
 somaticVcf: The normalised small variant vcf
@@ -21,7 +22,8 @@ outputDirectory/fisherVCF/sampleID.vcf.gz
 ## Annotate Somatic Small Variant VCF   
  
 Is run on LSF using from_annotation_to_vcf.sh:
-bsub -n 1 -J "annot" -q bio -P Analysis -o logs/job_%J.log -e logs/job_%J.err "bash from_annotation_to_vcf.sh -v fisherVCF -j annotationJSON -o outputDir"
+bsub -n 1 -J "annot" -q bio -P Analysis -o logs/job_%J.log -e logs/job_%J.err "bash from_annotation_to_vcf.sh -v fisherVCF -j annotationJSON -o outputDir/"
+NB forward slash required at end of output directory
 
 fisherVCF: vcf generated from component "Somatic Variant Filtering" 
 annotationJSON: annotation JSON generated from cellbase 

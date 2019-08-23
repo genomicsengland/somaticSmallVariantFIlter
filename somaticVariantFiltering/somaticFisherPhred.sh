@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Submit with 
-# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory" 
+# bsub -n 12 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b tumourBamFile -v somaticVcf -o outputDirectory" 
 # e.g. 
-# bsub -n 1 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b /genomes/by_date/2018-06-25/CANCP41874/CancerLP3000396-DNA_G02_NormalLP3000417-DNA_H02/LP3000396-DNA_G02/Assembly/LP3000396-DNA_G02.bam -v /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testInput/LP3000396-DNA_G02.duprem.left.split.reheadered.head6k.vcf.gz -o /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testOutput/" 
+# bsub -n 12 -J "noiseFlag" -q bio -P Analysis -o logs/somaticFisherPhred_%J.log -e logs/somaticFisherPhred_%J.err  "bash somaticFisherPhred.sh -b /genomes/by_date/2018-06-25/CANCP41874/CancerLP3000396-DNA_G02_NormalLP3000417-DNA_H02/LP3000396-DNA_G02/Assembly/LP3000396-DNA_G02.bam -v /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testInput/LP3000396-DNA_G02.duprem.left.split.reheadered.head6k.vcf.gz -o /home/jmitchell1/noiseModelBertha_passArg/somaticVariantFiltering/testOutput/" 
 
 #Set the cancer test environment to replicate Bertha
 source /genomes/software/src/test-venvs/cancer-test/bin/activate
@@ -27,7 +27,7 @@ mkdir -p ${outDir}
 
 #Load modules
 module load bcftools/1.9
-
+module load parallel/20170522
 
 #Create sample name (everything before first . in vcf filename)
 samplename=${vcf##*/}
@@ -65,29 +65,50 @@ fisher_vcf_uz="${fisher_vcf_dir}${samplename}.vcf"
 #Extract all SNVs in autosome and sex chromosomes and put in temporary text file
 python ${DIR}/writeSNV.py ${vcf} ${snvtxt}
 
-
 #Perfom pileup (alelle depth count) on tumour BAM at somatic SNV sites
 #### Important that this step is run in parallel (e.g. 12 cores looping through chromosomes) ####
-time bcftools mpileup -q 5 -Q 5 --ff 1024 -A -d 1000 --no-reference -Ou -a INFO/AD,FORMAT/AD -R <(cut -f 1-2 ${snvtxt}) ${somBam}  |\
+parallel -j 12 'bcftools mpileup -q 5 -Q 5 --ff 1024 -A -d 1000 --no-reference -Ou -a INFO/AD,FORMAT/AD -R <(cut -f 1-2 '${snvtxt}' | grep -w chr{}) '${somBam}'  |\
 bcftools annotate -x ^INFO/AD,^FORMAT/AD -Ov |\
-grep -v '^#' | cut -f 1,2,5,10,11 > ${pileup_out}
+grep -v '^#' | cut -f 1,2,5,10,11 > '${pileup_dir}'/'${samplename}'.chr{}.out' ::: {1..22} X Y
 
+rm ${pileup_out}
+for chrom in {1..22} X Y
+do
+cat ${pileup_dir}/${samplename}.chr${chrom}.out >> ${pileup_out} 
+rm ${pileup_dir}/${samplename}.chr${chrom}.out
+done
 
 ##Parse pileup output to make usuable for Fisher's Exact Test with PoN
 python ${DIR}/parse.bcftools_output.py ${snvtxt} ${pileup_out} > ${vcfAD}
 
-
 ##Perform Fisher's test (R script contains path to PoN on line 10, the PoN should be coppied somewhere accesible)
 #### Important that this step is run in parallel (e.g. 12 cores looping through chromosomes) ####
-time Rscript --vanilla ${DIR}/somaticAnnotateFisher_7k.R ${vcfAD} ${vcfFisher}
+
+
+for chrom in {1..22} X Y
+do
+grep -w chr${chrom} ${vcfAD} > ${depth_dir}${samplename}.chr${chrom}.snv.vcf
+done
+
+
+parallel -j 12 'Rscript --vanilla '${DIR}'/somaticAnnotateFisher_7k.R '${depth_dir}''${samplename}'.chr{}.snv.vcf '${fisher_dir}''${samplename}'.chr{}.fisher.snv.vcf' ::: {1..22} X Y
+
+
+rm ${vcfFisher}
+for chrom in {1..22} X Y
+do
+cat ${fisher_dir}${samplename}.chr${chrom}.fisher.snv.vcf >> ${vcfFisher}
+rm ${fisher_dir}${samplename}.chr${chrom}.fisher.snv.vcf ${depth_dir}${samplename}.chr${chrom}.snv.vcf
+done
 
 
 ##Annotate vcf with Fisher's test
 gunzip -c ${vcf} > ${vcf_uz}
 python ${DIR}/add.fisher.py ${vcf_uz} ${vcfFisher} > ${fisher_vcf_uz}
 
+
 ##Add information about annotation to header and tabix.  These two files ({fisher_vcf} & {fisher_vcf}.tbi) are the only files needed to be kept.
-bcftools annotate -h ${DIR}/header_SomaticFisherPhred.txt ${fisher_vcf_uz} -Oz -o ${fisher_vcf} 
+bcftools annotate -h ${DIR}/header_SomaticFisherPhred.txt ${fisher_vcf_uz} -Oz -o ${fisher_vcf}
 rm ${fisher_vcf_uz}
 tabix -p vcf ${fisher_vcf}
 
