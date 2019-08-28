@@ -40,7 +40,7 @@ annotated_vcf_dir="${outDir}annotatedVCF/"
 mkdir -p ${annotated_vcf_dir}
 annotated_vcf="${annotated_vcf_dir}${samplename}.vcf.gz"
 
-#Set running directory
+#Set running directory to directory of this script
 DIR=`dirname $0`
 
 #Create VCF with additional filters and annotation, and additional annotations (python script takes sample name from vcf, everything before first .)

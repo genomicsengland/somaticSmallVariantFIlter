@@ -33,7 +33,7 @@ module load parallel/20170522
 samplename=${vcf##*/}
 samplename=${samplename%%.*}
 
-#Set running directory
+#Set running directory to directory of this script
 DIR=`dirname $0`
 
 #Create directories and file names
@@ -108,8 +108,8 @@ python ${DIR}/add.fisher.py ${vcf_uz} ${vcfFisher} > ${fisher_vcf_uz}
 
 
 ##Add information about annotation to header and tabix.  These two files ({fisher_vcf} & {fisher_vcf}.tbi) are the only files needed to be kept.
-bcftools annotate -h ${DIR}/header_SomaticFisherPhred.txt ${fisher_vcf_uz} -Oz -o ${fisher_vcf}
-rm ${fisher_vcf_uz}
+bcftools annotate -h ${DIR}/header_SomaticFisherPhred.txt ${fisher_vcf_uz} -Oz  | bcftools reheader -s ${DIR}/sampleNames.txt -o ${fisher_vcf} 
+rm ${fisher_vcf_uz} 
 tabix -p vcf ${fisher_vcf}
 
 
