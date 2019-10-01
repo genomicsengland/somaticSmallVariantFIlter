@@ -45,4 +45,6 @@ DIR=`dirname $0`
 
 #Create VCF with additional filters and annotation, and additional annotations (python script takes sample name from vcf, everything before first .)
 python ${DIR}/from_annotation_to_vcf.py -v ${vcf} -j ${json} -o ${annotated_vcf_dir}
+bcftools annotate -x FORMAT/GT ${annotated_vcf} -Oz -o ${annotated_vcf}_tmp
+mv ${annotated_vcf}_tmp ${annotated_vcf}
 tabix -p vcf ${annotated_vcf}
